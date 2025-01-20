@@ -35,7 +35,7 @@ def annotate(
     )
     
     # Load data
-    data = read_data(input_data_path)
+    data = read_data(input_data_path, as_df=True).to_dict(as_series=False)
     
     # Run prompt
     results = prompt(**data, num_proc=num_proc)
