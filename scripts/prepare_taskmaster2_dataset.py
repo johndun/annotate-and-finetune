@@ -1,0 +1,53 @@
+"""Prepare Taskmaster-2 dataset for training.
+
+Downloads the dataset from:
+https://github.com/google-research-datasets/Taskmaster/tree/master/TM-2-2020
+"""
+
+from pathlib import Path
+from typing import Annotated
+import json
+
+import typer
+from typer import Option
+
+
+def prepare_taskmaster2(
+    input_dir: Annotated[
+        Path,
+        Option(help="Directory containing TM-2-2020 JSON files")
+    ] = Path.home() / "Work/Taskmaster/TM-2-2020/data",
+    output_dir: Annotated[
+        Path,
+        Option(help="Output directory for processed files")
+    ] = Path.home() / "data/taskmaster2",
+):
+    """Process Taskmaster-2 files into a single jsonlines file.
+    
+    Each line will contain a dictionary with:
+    - dialog: List of utterance dictionaries
+    - label: The conversation category (e.g. "flights", "food-ordering")
+    """
+    # Create output directory
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_file = output_dir / "taskmaster2.jsonl"
+
+    # Process each JSON file
+    with output_file.open('w') as outf:
+        for json_file in input_dir.glob('*.json'):
+            label = json_file.stem  # e.g. "flights" from "flights.json"
+            
+            # Read and process conversations
+            data = json.loads(json_file.read_text())
+            for conv in data:
+                # Write each conversation as a JSON line
+                outf.write(json.dumps({
+                    'dialog': conv['utterances'],
+                    'label': label
+                }) + '\n')
+
+    print(f"Processed Taskmaster-2 dataset saved to: {output_file}")
+
+
+if __name__ == "__main__":
+    typer.run(prepare_taskmaster2)
