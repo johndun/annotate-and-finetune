@@ -61,4 +61,6 @@ def prepare_taskmaster2_dialog_dataset(
 
 
 if __name__ == "__main__":
-    typer.run(prepare_taskmaster2_dialog_dataset)
+    app = typer.Typer(add_completion=False, pretty_exceptions_show_locals=False)
+    app.command()(prepare_taskmaster2_dialog_dataset)
+    app()
