@@ -49,19 +49,18 @@ def prepare_taskmaster2_turn_dataset(
         Path,
         Option(help="Input jsonl file from prepare_taskmaster2_dialog_dataset.py")
     ] = Path.home() / "data/taskmaster2/taskmaster2_dialog.jsonl",
-    output_dir: Annotated[
+    output_path: Annotated[
         Path,
-        Option(help="Output directory for processed files")
-    ] = Path.home() / "data/taskmaster2",
+        Option(help="Output path for the processed jsonl file")
+    ] = Path.home() / "data/taskmaster2/taskmaster2_turns.jsonl",
 ):
     """Process Taskmaster-2 dialog dataset into turn-level records with cumulative context."""
     
-    # Create output directory
-    output_dir.mkdir(parents=True, exist_ok=True)
-    output_file = output_dir / "taskmaster2_turns.jsonl"
+    # Create output directory if needed
+    output_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Process each dialog
-    with output_file.open('w') as outf:
+    with output_path.open('w') as outf:
         for line in open(input_file):
             dialog_data = json.loads(line)
             
@@ -75,7 +74,7 @@ def prepare_taskmaster2_turn_dataset(
             for turn in turns:
                 outf.write(json.dumps(turn) + '\n')
 
-    print(f"Processed Taskmaster-2 turn dataset saved to: {output_file}")
+    print(f"Processed Taskmaster-2 turn dataset saved to: {output_path}")
 
 
 if __name__ == "__main__":
