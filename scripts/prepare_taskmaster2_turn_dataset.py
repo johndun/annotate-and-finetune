@@ -13,17 +13,31 @@ from typer import Option
 
 
 def process_dialog_to_turns(dialog: str, label: str) -> List[Dict]:
-    """Convert a dialog string into a list of cumulative turn records."""
+    """Convert a dialog string into a list of cumulative turn records.
+    Each turn contains a USER message followed by an ASSISTANT response."""
     turns = []
     dialog_lines = dialog.split('\n')
     
-    for i in range(len(dialog_lines)):
-        # Build context from all previous turns plus current
-        context = '\n'.join(dialog_lines[:i+1])
+    # Process lines in pairs of USER + ASSISTANT messages
+    for i in range(0, len(dialog_lines)-1, 2):
+        # Skip if we don't have both USER and ASSISTANT messages
+        if i+1 >= len(dialog_lines):
+            break
+            
+        # Verify we have USER then ASSISTANT pattern
+        current_line = dialog_lines[i]
+        next_line = dialog_lines[i+1]
+        if not (current_line.startswith('USER:') and next_line.startswith('ASSISTANT:')):
+            continue
+            
+        # Build context from all previous turns plus current pair
+        context = '\n'.join(dialog_lines[:i+2])
         turn = {
             'context': context,
             'label': label,
-            'turn_index': i
+            'turn_index': i//2,  # Index counts pairs rather than individual messages
+            'user_message': current_line,
+            'assistant_message': next_line
         }
         turns.append(turn)
     
