@@ -1,0 +1,9 @@
+task: Label user requests in a dialog.
+inputs:
+  - name: dialog
+    description: A dialog between a user and an assistant
+outputs:
+  - name: label
+    description: A user request type
+details: |-
+  Request type labels should capture the user's intention, what they are trying to accomplish. Labels should be concise and use title case.

@@ -54,3 +54,21 @@ Update the script so that each row contains both a new USER and a new ASSISTANT 
 ### Prompt 3
 
 Update the script to replace output_dir with output_path
+
+```bash
+aider --sonnet --no-analytics --read LLMPIPE_VIGNETTE.md --read scripts/example_annotation_instructions.yaml scripts/annotate.py
+```
+
+Write a command line script that:
+
+- loads a config from a yaml file and uses it to initialize a `llmpipe.PromptModule` instance
+- loads a dataset
+- runs the dataset through the prompt
+- saves the dataset
+
+Command line args:
+
+- prompt-yaml-path (default to scripts/example_annotation_instructions.yaml)
+- input-data-path (default to ~/data/taskmaster2/taskmaster2_dialogs.jsonl)
+- output-data-path (default to ~/data/taskmaster2/taskmaster2_dialogs_annotated.jsonl)
+- num-proc (default to 1)
