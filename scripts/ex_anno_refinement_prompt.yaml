@@ -1,0 +1,16 @@
+task: Consolidate a set of free form labels to create a comprehensive, deduped set of labels.
+inputs:
+  - name: labels
+    description: A markdown table of labels in descending frequency order
+outputs:
+  - name: refined_labels
+    type: jsonlines
+    description: A table of labels with descriptions
+    evaluations:
+      - type: llm
+        value: Fewer than 50 rows
+    fields:
+      - name: label
+        description: A label name
+      - name: description
+        description: Description for the label

@@ -68,7 +68,30 @@ Write a command line script that:
 
 Command line args:
 
-- prompt-yaml-path (default to scripts/example_annotation_instructions.yaml)
+- prompt-yaml-path (default to scripts/example_annotation_prompt.yaml)
 - input-data-path (default to ~/data/taskmaster2/taskmaster2_dialogs.jsonl)
 - output-data-path (default to ~/data/taskmaster2/taskmaster2_dialogs_annotated.jsonl)
 - num-proc (default to 1)
+- model (default to claude-3-5-sonnet-20241022)
+- verbose (default to False)
+
+```bash
+aider --sonnet --no-analytics --read scripts/annotate.py  --read scripts/ex_anno_refinement__prompt.yaml scripts/refine_annotation_classes.py
+```
+
+Write a command line script that:
+
+- loads a config from a yaml file and uses it to initialize a `llmpipe.PromptModule` instance
+- loads a dataset with a "label" field
+- creates a markdown table of the top 500 most frequently occurring labels
+- passes this to the "labels" input of the prompt module instance.
+- extracts the "refined_labels" key from the response and saves it to a jsonlines file
+
+Command line args:
+
+- prompt-yaml-path (default to scripts/ex_anno_refinement__prompt.yaml)
+- input-data-path (default to ~/data/taskmaster2/taskmaster2_dialogs.jsonl)
+- output-data-path (default to ~/data/taskmaster2/taskmaster2_dialogs_annotated.jsonl)
+- num-proc (default to 1)
+- model (default to claude-3-5-sonnet-20241022)
+- verbose (default to False)

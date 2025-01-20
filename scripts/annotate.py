@@ -11,7 +11,7 @@ from llmpipe import PromptModule, read_data, write_data
 
 
 def annotate(
-    prompt_yaml_path: Annotated[str, Option(help="Path to yaml file with prompt config")] = "scripts/example_annotation_instructions.yaml",
+    prompt_yaml_path: Annotated[str, Option(help="Path to yaml file with prompt config")] = "scripts/example_annotation_prompt.yaml",
     input_data_path: Annotated[str, Option(help="Path to input dataset")] = "~/data/taskmaster2/taskmaster2_dialogs.jsonl",
     output_data_path: Annotated[str, Option(help="Path to save annotated dataset")] = "~/data/taskmaster2/taskmaster2_dialogs_annotated.jsonl",
     n_samples: Annotated[int, Option(help="Number of random samples to process")] = None,
