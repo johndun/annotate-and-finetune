@@ -1,0 +1,429 @@
+[
+  {
+    "conversation_id": "dlg-00100680-00e0-40fe-8321-6d81b21bfc4f",
+    "instruction_id": "flight-12",
+    "utterances": [
+      {
+        "index": 0,
+        "speaker": "USER",
+        "text": "Hello. I'd like to find a round trip commercial airline flight from San Francisco to Denver.",
+        "segments": [
+          {
+            "start_index": 26,
+            "end_index": 36,
+            "text": "round trip",
+            "annotations": [
+              {
+                "name": "flight_search.type"
+              }
+            ]
+          },
+          {
+            "start_index": 68,
+            "end_index": 81,
+            "text": "San Francisco",
+            "annotations": [
+              {
+                "name": "flight_search.origin"
+              }
+            ]
+          },
+          {
+            "start_index": 85,
+            "end_index": 91,
+            "text": "Denver",
+            "annotations": [
+              {
+                "name": "flight_search.destination1"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "speaker": "ASSISTANT",
+        "text": "Hello, how can I help you?"
+      },
+      {
+        "index": 2,
+        "speaker": "ASSISTANT",
+        "text": "San Francisco to Denver, got it.",
+        "segments": [
+          {
+            "start_index": 0,
+            "end_index": 13,
+            "text": "San Francisco",
+            "annotations": [
+              {
+                "name": "flight_search.origin"
+              }
+            ]
+          },
+          {
+            "start_index": 17,
+            "end_index": 23,
+            "text": "Denver",
+            "annotations": [
+              {
+                "name": "flight_search.destination1"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "speaker": "USER",
+        "text": "You're really on top of things. I like that."
+      },
+      {
+        "index": 4,
+        "speaker": "ASSISTANT",
+        "text": "So what days are you looking to fly?"
+      },
+      {
+        "index": 5,
+        "speaker": "ASSISTANT",
+        "text": "Hey, what else can you say?"
+      },
+      {
+        "index": 6,
+        "speaker": "USER",
+        "text": "I'm looking to fly out sometime today, the earliest time today, and I'll be returning in 4 days.",
+        "segments": [
+          {
+            "start_index": 57,
+            "end_index": 62,
+            "text": "today",
+            "annotations": [
+              {
+                "name": "flight_search.date.depart_origin"
+              }
+            ]
+          },
+          {
+            "start_index": 89,
+            "end_index": 95,
+            "text": "4 days",
+            "annotations": [
+              {
+                "name": "flight_search.date.return"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 7,
+        "speaker": "USER",
+        "text": "So, I would like to fly out sometime tonight and fly back in the evening in 4 days. From I'm looking to go to Denver. I'm flying out of San Francisco.",
+        "segments": [
+          {
+            "start_index": 58,
+            "end_index": 72,
+            "text": "in the evening",
+            "annotations": [
+              {
+                "name": "flight_search.time_of_day"
+              }
+            ]
+          },
+          {
+            "start_index": 76,
+            "end_index": 82,
+            "text": "4 days",
+            "annotations": [
+              {
+                "name": "flight_search.date.return"
+              }
+            ]
+          },
+          {
+            "start_index": 110,
+            "end_index": 116,
+            "text": "Denver",
+            "annotations": [
+              {
+                "name": "flight_search.destination1"
+              }
+            ]
+          },
+          {
+            "start_index": 136,
+            "end_index": 149,
+            "text": "San Francisco",
+            "annotations": [
+              {
+                "name": "flight_search.origin"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 8,
+        "speaker": "ASSISTANT",
+        "text": "That sounds good, where you looking to go?"
+      },
+      {
+        "index": 9,
+        "speaker": "ASSISTANT",
+        "text": "That's right okay we have prices starting at $337.",
+        "segments": [
+          {
+            "start_index": 45,
+            "end_index": 49,
+            "text": "$337",
+            "annotations": [
+              {
+                "name": "flight_search.price_range"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 10,
+        "speaker": "USER",
+        "text": "That sounds very good. I just have two preferences. I want a nonstop flight.",
+        "segments": [
+          {
+            "start_index": 61,
+            "end_index": 68,
+            "text": "nonstop",
+            "annotations": [
+              {
+                "name": "flight_search.stops"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 11,
+        "speaker": "USER",
+        "text": "And I'd like to get an aisle seat.",
+        "segments": [
+          {
+            "start_index": 23,
+            "end_index": 33,
+            "text": "aisle seat",
+            "annotations": [
+              {
+                "name": "flight_search.seat_location"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 12,
+        "speaker": "ASSISTANT",
+        "text": "Okay, Non-Stop and if I heard you correctly did you say you wanted to leave as early as possible and also Nile C.",
+        "segments": [
+          {
+            "start_index": 6,
+            "end_index": 14,
+            "text": "Non-Stop",
+            "annotations": [
+              {
+                "name": "flight_search.stops"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 13,
+        "speaker": "USER",
+        "text": "Yes."
+      },
+      {
+        "index": 14,
+        "speaker": "ASSISTANT",
+        "text": "Okay, you got it so it looks like United Airlines leaves at 9:20 p.m. that is nonstop the flight duration is 2 hours and 28 minutes and is priced at $337.",
+        "segments": [
+          {
+            "start_index": 34,
+            "end_index": 40,
+            "text": "United",
+            "annotations": [
+              {
+                "name": "flight1_detail.airline"
+              }
+            ]
+          },
+          {
+            "start_index": 60,
+            "end_index": 69,
+            "text": "9:20 p.m.",
+            "annotations": [
+              {
+                "name": "flight1_detail.from.time"
+              }
+            ]
+          },
+          {
+            "start_index": 78,
+            "end_index": 85,
+            "text": "nonstop",
+            "annotations": [
+              {
+                "name": "flight1_detail.stops"
+              }
+            ]
+          },
+          {
+            "start_index": 97,
+            "end_index": 131,
+            "text": "duration is 2 hours and 28 minutes",
+            "annotations": [
+              {
+                "name": "flight1_detail.other_description"
+              }
+            ]
+          },
+          {
+            "start_index": 149,
+            "end_index": 153,
+            "text": "$337",
+            "annotations": [
+              {
+                "name": "flight1_detail.fare"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 15,
+        "speaker": "USER",
+        "text": "That sounds very good."
+      },
+      {
+        "index": 16,
+        "speaker": "ASSISTANT",
+        "text": "Perfect."
+      },
+      {
+        "index": 17,
+        "speaker": "USER",
+        "text": "And what time will I be I would like an evening flight on the return flight in 4 days.",
+        "segments": [
+          {
+            "start_index": 40,
+            "end_index": 47,
+            "text": "evening",
+            "annotations": [
+              {
+                "name": "flight_search.time_of_day"
+              }
+            ]
+          },
+          {
+            "start_index": 79,
+            "end_index": 85,
+            "text": "4 days",
+            "annotations": [
+              {
+                "name": "flight_search.date.return"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 18,
+        "speaker": "USER",
+        "text": "Does that include the return flight?"
+      },
+      {
+        "index": 19,
+        "speaker": "ASSISTANT",
+        "text": "How does 5:30 a.m. work?",
+        "segments": [
+          {
+            "start_index": 9,
+            "end_index": 18,
+            "text": "5:30 a.m.",
+            "annotations": [
+              {
+                "name": "flight2_detail.from.time"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 20,
+        "speaker": "USER",
+        "text": "Well, the evening works better.",
+        "segments": [
+          {
+            "start_index": 10,
+            "end_index": 17,
+            "text": "evening",
+            "annotations": [
+              {
+                "name": "flight_search.time_of_day"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 21,
+        "speaker": "ASSISTANT",
+        "text": "Okay, got it."
+      },
+      {
+        "index": 22,
+        "speaker": "ASSISTANT",
+        "text": "6:55 p.m."
+      },
+      {
+        "index": 23,
+        "speaker": "USER",
+        "text": "That works. That's very good."
+      },
+      {
+        "index": 24,
+        "speaker": "ASSISTANT",
+        "text": "Alright, perfect so that is United Airlines as well.",
+        "segments": [
+          {
+            "start_index": 28,
+            "end_index": 34,
+            "text": "United",
+            "annotations": [
+              {
+                "name": "flight2_detail.airline"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "index": 25,
+        "speaker": "USER",
+        "text": "Excellent. Thank you so much, assistant."
+      },
+      {
+        "index": 26,
+        "speaker": "ASSISTANT",
+        "text": "Pleasure all mine. Enjoy your trip to Denver, have a great night."
+      },
+      {
+        "index": 27,
+        "speaker": "ASSISTANT",
+        "text": "Your welcome."
+      },
+      {
+        "index": 28,
+        "speaker": "USER",
+        "text": "I think I'm all set. Thank you so much."
+      }
+    ]
+  }
+]

@@ -1,6 +1,5 @@
-Use `typer` to define command line scripts:
+# Use `typer` to define command line scripts:
 
-```python
 from typing import Annotated
 
 import typer
@@ -23,4 +22,3 @@ if __name__ == "__main__":
     app = typer.Typer(add_completion=False, pretty_exceptions_show_locals = False)
     app.command()(yaml_prompt)
     app()
-```
