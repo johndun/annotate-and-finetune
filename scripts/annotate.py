@@ -1,10 +1,11 @@
 from pathlib import Path
 from typing import Annotated
 import random
+import yaml
 
 import typer
 from typer import Option
-import yaml
+import polars as pl
 
 from llmpipe import PromptModule, read_data, write_data
 
@@ -37,15 +38,14 @@ def annotate(
     )
     
     # Load data
-    data = read_data(input_data_path, as_df=True)
+    samples = read_data(input_data_path)
     
     # Sample if requested
     if n_samples is not None:
-        n_samples = min(n_samples, len(data))
-        indices = random.sample(range(len(data)), n_samples)
-        data = data.take(indices)
-    
-    data = data.to_dict(as_series=False)
+        n_samples = min(n_samples, len(samples))
+        samples = random.sample(samples, n_samples)
+
+    data = pl.from_dicts(samples).to_dict(as_series=False)
     
     # Run prompt
     results = prompt(**data, num_proc=num_proc)

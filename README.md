@@ -56,7 +56,7 @@ Update the script so that each row contains both a new USER and a new ASSISTANT 
 Update the script to replace output_dir with output_path
 
 ```bash
-aider --sonnet --no-analytics --read LLMPIPE_VIGNETTE.md --read scripts/example_annotation_instructions.yaml scripts/annotate.py
+aider --sonnet --no-analytics --read examples.py --read LLMPIPE_VIGNETTE.md --read scripts/example_annotation_instructions.yaml scripts/annotate.py
 ```
 
 Write a command line script that:

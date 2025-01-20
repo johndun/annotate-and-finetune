@@ -4,6 +4,6 @@ inputs:
     description: A dialog between a user and an assistant
 outputs:
   - name: label
-    description: A user request type
+    description: A high-level category for the type of dialog
 details: |-
   Request type labels should capture the user's intention, what they are trying to accomplish. Labels should be concise and use title case.
