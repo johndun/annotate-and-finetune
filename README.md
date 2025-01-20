@@ -32,6 +32,10 @@ Update the script so that it converts the dialog into a string representation wi
 
 Update the script so that the first message is deleted if it is an ASSISTANT message.
 
+### Prompt 4
+
+Update the script to replace output_dir with output_path
+
 ```bash
 aider --sonnet --no-analytics --read examples.py --read scripts/example_data.json  --read scripts/prepare_taskmaster2_dialog_dataset.py scripts/prepare_taskmaster2_turn_dataset.py
 ```
@@ -46,3 +50,7 @@ Write a command line script that inputs a path to the output of scripts/prepare_
 ### Prompt 2
 
 Update the script so that each row contains both a new USER and a new ASSISTANT message. Currently, each turn contains a single new message.
+
+### Prompt 3
+
+Update the script to replace output_dir with output_path
