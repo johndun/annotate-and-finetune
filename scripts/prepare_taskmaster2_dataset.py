@@ -5,11 +5,21 @@ https://github.com/google-research-datasets/Taskmaster/tree/master/TM-2-2020
 """
 
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, List, Dict
 import json
 
 import typer
 from typer import Option
+
+
+def format_conversation(utterances: List[Dict]) -> str:
+    """Convert utterances into a string with USER and ASSISTANT turns."""
+    conversation = []
+    for utterance in utterances:
+        speaker = utterance["speaker"]
+        text = utterance["text"]
+        conversation.append(f"{speaker}: {text}")
+    return "\n".join(conversation)
 
 
 def prepare_taskmaster2(
@@ -40,9 +50,10 @@ def prepare_taskmaster2(
             # Read and process conversations
             data = json.loads(json_file.read_text())
             for conv in data:
-                # Write each conversation as a JSON line
+                # Convert dialog to string format and write as JSON line
+                dialog_str = format_conversation(conv['utterances'])
                 outf.write(json.dumps({
-                    'dialog': conv['utterances'],
+                    'dialog': dialog_str,
                     'label': label
                 }) + '\n')
 
