@@ -1,0 +1,12 @@
+task: Label user requests in a dialog.
+inputs:
+  - name: dialog
+    description: A dialog between a user and an assistant
+  - name: allowed_labels
+    description: The set of allowed labels
+outputs:
+  - name: label
+    description: A high-level category for the type of dialog
+    evaluations:
+      - type: llm
+        value: Is one of the allowed labels

@@ -91,7 +91,22 @@ Command line args:
 
 - prompt-yaml-path (default to scripts/ex_anno_refinement__prompt.yaml)
 - input-data-path (default to ~/data/taskmaster2/taskmaster2_dialogs.jsonl)
-- output-data-path (default to ~/data/taskmaster2/taskmaster2_dialogs_annotated.jsonl)
+- output-data-path (default to ~/data/taskmaster2/refined_labels.jsonl)
 - num-proc (default to 1)
 - model (default to claude-3-5-sonnet-20241022)
 - verbose (default to False)
+
+```bash
+aider --sonnet --no-analytics scripts/annotate.py
+```
+
+Update the script so that it has an allowed_classes_path argument that defaults to None. If this field is present, the file should be loaded (it should be a jsonlines file), converted to a markdown list, and added to `data`.
+
+
+
+```bash
+python scripts/prepare_taskmaster2_dialog_dataset.py
+python scripts/prepare_taskmaster2_turn_dataset.py
+python scripts/annotate.py
+python scripts/refine_annotation_classes.py
+```

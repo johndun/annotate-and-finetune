@@ -12,10 +12,11 @@ def create_label_frequency_table(data: List[Dict]) -> str:
     """Create markdown table of label frequencies."""
     # Count label frequencies
     df = pl.DataFrame(data)
-    freq = (df
+    freq = (
+        df
         .select('label')
-        .groupby('label')
-        .count()
+        .group_by('label')
+        .agg(count=pl.col("label").count())
         .sort('count', descending=True)
         .head(500)
     )
@@ -28,8 +29,8 @@ def create_label_frequency_table(data: List[Dict]) -> str:
 
 def refine_labels(
     prompt_yaml_path: Annotated[str, Option(help="Path to yaml file with prompt config")] = "scripts/ex_anno_refinement_prompt.yaml",
-    input_data_path: Annotated[str, Option(help="Path to input dataset")] = "~/data/taskmaster2/taskmaster2_dialogs.jsonl",
-    output_data_path: Annotated[str, Option(help="Path to save refined labels")] = "~/data/taskmaster2/taskmaster2_dialogs_annotated.jsonl",
+    input_data_path: Annotated[str, Option(help="Path to input dataset")] = "~/data/taskmaster2/taskmaster2_dialogs_annotated.jsonl",
+    output_data_path: Annotated[str, Option(help="Path to save refined labels")] = "~/data/taskmaster2/refined_labels.jsonl",
     num_proc: Annotated[int, Option(help="Number of processes to use")] = 1,
     model: Annotated[str, Option(help="LiteLLM model identifier")] = "claude-3-5-sonnet-20241022",
     verbose: Annotated[bool, Option(help="Stream output to stdout")] = False
@@ -51,6 +52,8 @@ def refine_labels(
         model=model,
         verbose=verbose
     )
+    if verbose:
+        print(prompt.prompt)
     
     # Load data and create frequency table
     samples = read_data(input_data_path)
