@@ -1,0 +1,30 @@
+[project]
+name = "annotate-and-finetune"
+version = "0.1.0"
+description = "Perform LLM-based annotation and text classification model fine tuning."
+authors = [
+    {name = "John Dunavent", email = "dunavent.jm@gmail.com"},
+]
+dependencies = [
+    "litellm>=1.52",
+    "typer>=0.13",
+    "llmpipe @ git+https://github.com/johndun/llmpipe.git"
+]
+requires-python = ">=3.10"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+    "ipython",
+    "polars>=1.12",
+    "nb-clean>=3.3.0",
+    "pytest-cov>=2.0",
+    "pdoc3>=0.11",
+    "jupyter>=1.1.1",
+    "boto3>=1.35",
+    "datasets>=3.1"
+]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
