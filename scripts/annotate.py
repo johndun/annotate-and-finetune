@@ -17,7 +17,8 @@ def annotate(
     n_samples: Annotated[int, Option(help="Number of random samples to process")] = None,
     num_proc: Annotated[int, Option(help="Number of processes to use")] = 1,
     model: Annotated[str, Option(help="LiteLLM model identifier")] = "claude-3-5-sonnet-20241022",
-    verbose: Annotated[bool, Option(help="Stream output to stdout")] = False
+    verbose: Annotated[bool, Option(help="Stream output to stdout")] = False,
+    allowed_classes_path: Annotated[str, Option(help="Path to jsonlines file containing allowed classes")] = None
 ):
     """Run a prompt from a yaml config file on a dataset."""
     
@@ -46,6 +47,14 @@ def annotate(
         samples = random.sample(samples, n_samples)
 
     data = pl.from_dicts(samples).to_dict(as_series=False)
+    
+    # Load and process allowed classes if provided
+    if allowed_classes_path:
+        allowed_classes_path = str(Path(allowed_classes_path).expanduser())
+        classes = read_data(allowed_classes_path)
+        # Convert classes to markdown list
+        classes_md = "\n".join([f"- {c['class']}" for c in classes])
+        data["allowed_classes"] = [classes_md] * len(samples)
     
     # Run prompt
     results = prompt(**data, num_proc=num_proc)
