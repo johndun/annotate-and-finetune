@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Annotated
+import random
 
 import typer
 from typer import Option
@@ -12,6 +13,7 @@ def annotate(
     prompt_yaml_path: Annotated[str, Option(help="Path to yaml file with prompt config")] = "scripts/example_annotation_instructions.yaml",
     input_data_path: Annotated[str, Option(help="Path to input dataset")] = "~/data/taskmaster2/taskmaster2_dialogs.jsonl",
     output_data_path: Annotated[str, Option(help="Path to save annotated dataset")] = "~/data/taskmaster2/taskmaster2_dialogs_annotated.jsonl",
+    n_samples: Annotated[int, Option(help="Number of random samples to process")] = None,
     num_proc: Annotated[int, Option(help="Number of processes to use")] = 1,
     model: Annotated[str, Option(help="LiteLLM model identifier")] = "claude-3-5-sonnet-20241022",
     verbose: Annotated[bool, Option(help="Stream output to stdout")] = False
@@ -35,7 +37,15 @@ def annotate(
     )
     
     # Load data
-    data = read_data(input_data_path, as_df=True).to_dict(as_series=False)
+    data = read_data(input_data_path, as_df=True)
+    
+    # Sample if requested
+    if n_samples is not None:
+        n_samples = min(n_samples, len(data))
+        indices = random.sample(range(len(data)), n_samples)
+        data = data.take(indices)
+    
+    data = data.to_dict(as_series=False)
     
     # Run prompt
     results = prompt(**data, num_proc=num_proc)
