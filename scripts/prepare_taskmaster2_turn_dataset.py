@@ -48,7 +48,7 @@ def prepare_taskmaster2_turn_dataset(
     input_file: Annotated[
         Path,
         Option(help="Input jsonl file from prepare_taskmaster2_dialog_dataset.py")
-    ] = Path.home() / "data/taskmaster2/taskmaster2_dialog.jsonl",
+    ] = Path.home() / "data/taskmaster2/taskmaster2_dialogs.jsonl",
     output_path: Annotated[
         Path,
         Option(help="Output path for the processed jsonl file")

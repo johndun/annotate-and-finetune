@@ -33,7 +33,7 @@ def prepare_taskmaster2_dialog_dataset(
     output_path: Annotated[
         Path,
         Option(help="Output path for the processed jsonl file")
-    ] = Path.home() / "data/taskmaster2/taskmaster2_dialog.jsonl",
+    ] = Path.home() / "data/taskmaster2/taskmaster2_dialogs.jsonl",
 ):
     """Process Taskmaster-2 files into a single jsonlines file.
     
