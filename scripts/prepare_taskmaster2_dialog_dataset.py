@@ -29,7 +29,7 @@ def prepare_taskmaster2_dialog_dataset(
     input_dir: Annotated[
         Path,
         Option(help="Directory containing TM-2-2020 JSON files")
-    ] = Path.home() / "Work/Taskmaster/TM-2-2020/data",
+    ] = Path.home() / "Taskmaster/TM-2-2020/data",
     output_dir: Annotated[
         Path,
         Option(help="Output directory for processed files")
@@ -37,9 +37,7 @@ def prepare_taskmaster2_dialog_dataset(
 ):
     """Process Taskmaster-2 files into a single jsonlines file.
     
-    Each line will contain a dictionary with:
-    - dialog: List of utterance dictionaries
-    - label: The conversation category (e.g. "flights", "food-ordering")
+    Each line will contain a dictionary with a string representation of the dialog the label.
     """
     # Create output directory
     output_dir.mkdir(parents=True, exist_ok=True)
