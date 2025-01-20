@@ -30,21 +30,20 @@ def prepare_taskmaster2_dialog_dataset(
         Path,
         Option(help="Directory containing TM-2-2020 JSON files")
     ] = Path.home() / "Taskmaster/TM-2-2020/data",
-    output_dir: Annotated[
+    output_path: Annotated[
         Path,
-        Option(help="Output directory for processed files")
-    ] = Path.home() / "data/taskmaster2",
+        Option(help="Output path for the processed jsonl file")
+    ] = Path.home() / "data/taskmaster2/taskmaster2_dialog.jsonl",
 ):
     """Process Taskmaster-2 files into a single jsonlines file.
     
     Each line will contain a dictionary with a string representation of the dialog the label.
     """
-    # Create output directory
-    output_dir.mkdir(parents=True, exist_ok=True)
-    output_file = output_dir / "taskmaster2_dialog.jsonl"
+    # Create output directory if needed
+    output_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Process each JSON file
-    with output_file.open('w') as outf:
+    with output_path.open('w') as outf:
         for json_file in input_dir.glob('*.json'):
             label = json_file.stem  # e.g. "flights" from "flights.json"
             
@@ -58,7 +57,7 @@ def prepare_taskmaster2_dialog_dataset(
                     'label': label
                 }) + '\n')
 
-    print(f"Processed Taskmaster-2 dialog dataset saved to: {output_file}")
+    print(f"Processed Taskmaster-2 dialog dataset saved to: {output_path}")
 
 
 if __name__ == "__main__":
