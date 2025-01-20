@@ -22,3 +22,28 @@ if __name__ == "__main__":
     app = typer.Typer(add_completion=False, pretty_exceptions_show_locals = False)
     app.command()(yaml_prompt)
     app()
+
+
+# Use read_data and write_data functions from llmpipe for data io
+
+def read_data(path: str, as_df: bool = False, **kwargs) -> List[Dict]:
+    """Reads tab separated (with header, .txt) or json lines (.jsonl) data from disk.
+
+    Args:
+        path: Path to the data file
+        as_df: If true, return a polars dataframe
+        kwargs: Arguments based to polars read data function
+
+    Returns:
+        List[Dict]: Data records/samples as a list of dictionaries
+    """
+    ...
+
+def write_data(samples: List[Dict], path: str):
+    """Writes data as tab separated (with header, .txt) or json lines (.jsonl) to disk.
+
+    Args:
+        samples: Data records/samples as a list of dictionaries
+        path: Path to the data file
+    """
+    ...

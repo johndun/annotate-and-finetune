@@ -22,7 +22,7 @@ def format_conversation(utterances: List[Dict]) -> str:
     return "\n".join(conversation)
 
 
-def prepare_taskmaster2(
+def prepare_taskmaster2_dialog_dataset(
     input_dir: Annotated[
         Path,
         Option(help="Directory containing TM-2-2020 JSON files")
@@ -40,7 +40,7 @@ def prepare_taskmaster2(
     """
     # Create output directory
     output_dir.mkdir(parents=True, exist_ok=True)
-    output_file = output_dir / "taskmaster2.jsonl"
+    output_file = output_dir / "taskmaster2_dialog.jsonl"
 
     # Process each JSON file
     with output_file.open('w') as outf:
@@ -57,8 +57,8 @@ def prepare_taskmaster2(
                     'label': label
                 }) + '\n')
 
-    print(f"Processed Taskmaster-2 dataset saved to: {output_file}")
+    print(f"Processed Taskmaster-2 dialog dataset saved to: {output_file}")
 
 
 if __name__ == "__main__":
-    typer.run(prepare_taskmaster2)
+    typer.run(prepare_taskmaster2_dialog_dataset)
