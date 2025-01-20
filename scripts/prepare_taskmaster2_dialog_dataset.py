@@ -13,9 +13,12 @@ from typer import Option
 
 
 def format_conversation(utterances: List[Dict]) -> str:
-    """Convert utterances into a string with USER and ASSISTANT turns."""
+    """Convert utterances into a string with USER and ASSISTANT turns.
+    Skips the first utterance if it's from ASSISTANT."""
     conversation = []
-    for utterance in utterances:
+    start_idx = 1 if utterances and utterances[0]["speaker"] == "ASSISTANT" else 0
+    
+    for utterance in utterances[start_idx:]:
         speaker = utterance["speaker"]
         text = utterance["text"]
         conversation.append(f"{speaker}: {text}")
