@@ -162,7 +162,8 @@ def _create_value_counts_table(valid_values: List[T], none_count: int, is_numeri
         if is_numeric:
             table += f"| {value:.2f} | {count} |\n"
         else:
-            table += f"| {value.replace("\n", "<br>")} | {count} |\n"
+            value = value.replace('\n', '<br>')
+            table += f"| {value} | {count} |\n"
 
     if none_count > 0:
         table += f"| None | {none_count} |\n"
