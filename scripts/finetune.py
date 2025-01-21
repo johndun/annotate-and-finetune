@@ -50,7 +50,7 @@ def finetune(
     val_input_data_path: Annotated[str, Option(help="Path to validation data")] = None,
     test_input_data_path: Annotated[str, Option(help="Path to test data")] = None,
     output_path: Annotated[str, Option(help="Path to save model and metrics")] = None,
-    num_epochs: Annotated[int, Option(help="Number of training epochs")] = 1,
+    num_epochs: Annotated[int, Option(help="Number of training epochs (0 to skip training)")] = 0,
     learning_rate: Annotated[float, Option(help="Learning rate")] = 0.00001,
     batch_size: Annotated[int, Option(help="Batch size for training and evaluation")] = 8,
 ):
@@ -125,22 +125,23 @@ def finetune(
         compute_metrics=compute_metrics,
     )
     
-    # Train model
-    trainer.train()
-    
-    # Evaluate on validation and test sets
-    val_metrics = trainer.evaluate()
-    test_metrics = trainer.evaluate(test_dataset)
-    
-    # Save metrics
-    metrics = {
-        "validation": val_metrics,
-        "test": test_metrics
-    }
-    
-    metrics_path = Path(output_path) / "metrics.json"
-    with open(metrics_path, "w") as f:
-        json.dump(metrics, f, indent=2)
+    # Train model if epochs > 0
+    if num_epochs > 0:
+        trainer.train()
+        
+        # Evaluate on validation and test sets
+        val_metrics = trainer.evaluate()
+        test_metrics = trainer.evaluate(test_dataset)
+        
+        # Save metrics
+        metrics = {
+            "validation": val_metrics,
+            "test": test_metrics
+        }
+        
+        metrics_path = Path(output_path) / "metrics.json"
+        with open(metrics_path, "w") as f:
+            json.dump(metrics, f, indent=2)
     
     # Save model and tokenizer
     trainer.save_model()
