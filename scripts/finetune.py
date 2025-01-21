@@ -146,10 +146,6 @@ def finetune(
             "learning_rate": learning_rate,
             "batch_size": batch_size,
             "weight_decay": 0.01,
-        },
-        "label_mappings": {
-            "label2id": label2id,
-            "id2label": id2label
         }
     }
     
