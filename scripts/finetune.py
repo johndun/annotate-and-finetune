@@ -128,20 +128,20 @@ def finetune(
     # Train model if epochs > 0
     if num_epochs > 0:
         trainer.train()
-        
-        # Evaluate on validation and test sets
-        val_metrics = trainer.evaluate()
-        test_metrics = trainer.evaluate(test_dataset)
-        
-        # Save metrics
-        metrics = {
-            "validation": val_metrics,
-            "test": test_metrics
-        }
-        
-        metrics_path = Path(output_path) / "metrics.json"
-        with open(metrics_path, "w") as f:
-            json.dump(metrics, f, indent=2)
+    
+    # Evaluate on validation and test sets
+    val_metrics = trainer.evaluate()
+    test_metrics = trainer.evaluate(test_dataset)
+    
+    # Save metrics
+    metrics = {
+        "validation": val_metrics,
+        "test": test_metrics
+    }
+    
+    metrics_path = Path(output_path) / "metrics.json"
+    with open(metrics_path, "w") as f:
+        json.dump(metrics, f, indent=2)
     
     # Save model and tokenizer
     trainer.save_model()
