@@ -52,6 +52,7 @@ def finetune(
     output_path: Annotated[str, Option(help="Path to save model and metrics")] = None,
     num_epochs: Annotated[int, Option(help="Number of training epochs")] = 1,
     learning_rate: Annotated[float, Option(help="Learning rate")] = 0.00001,
+    batch_size: Annotated[int, Option(help="Batch size for training and evaluation")] = 8,
 ):
     """Fine-tune a RoBERTa model for classification using the label field."""
     
@@ -106,8 +107,8 @@ def finetune(
         output_dir=output_path,
         num_train_epochs=num_epochs,
         learning_rate=learning_rate,
-        per_device_train_batch_size=8,
-        per_device_eval_batch_size=8,
+        per_device_train_batch_size=batch_size,
+        per_device_eval_batch_size=batch_size,
         weight_decay=0.01,
         evaluation_strategy="epoch",
         save_strategy="epoch",
