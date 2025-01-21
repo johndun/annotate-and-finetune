@@ -133,10 +133,14 @@ def finetune(
     val_metrics = trainer.evaluate()
     test_metrics = trainer.evaluate(test_dataset)
     
-    # Save metrics
+    # Save metrics and label mappings
     metrics = {
         "validation": val_metrics,
-        "test": test_metrics
+        "test": test_metrics,
+        "label_mappings": {
+            "label2id": label2id,
+            "id2label": id2label
+        }
     }
     
     metrics_path = Path(output_path) / "metrics.json"
@@ -146,15 +150,6 @@ def finetune(
     # Save model and tokenizer
     trainer.save_model()
     tokenizer.save_pretrained(output_path)
-    
-    # Save label mappings
-    mappings = {
-        "label2id": label2id,
-        "id2label": id2label
-    }
-    mappings_path = Path(output_path) / "label_mappings.json"
-    with open(mappings_path, "w") as f:
-        json.dump(mappings, f, indent=2)
 
 
 if __name__ == "__main__":
