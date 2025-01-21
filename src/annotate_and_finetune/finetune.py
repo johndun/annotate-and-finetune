@@ -47,28 +47,31 @@ def compute_metrics(pred: EvalPrediction, id2label: Dict[int, str] = None) -> Di
     return metrics
 
 
-def finetune(
-    model_path: Annotated[str, Option(help="Local or HuggingFace model path")] = "roberta-base",
-    train_input_data_path: Annotated[str, Option(help="Path to training data")] = None,
-    val_input_data_path: Annotated[str, Option(help="Path to validation data")] = None,
-    test_input_data_path: Annotated[str, Option(help="Path to test data")] = None,
-    output_path: Annotated[str, Option(help="Path to save model and metrics")] = None,
-    num_epochs: Annotated[int, Option(help="Number of training epochs (0 to skip training)")] = 0,
-    learning_rate: Annotated[float, Option(help="Learning rate")] = 0.00001,
-    batch_size: Annotated[int, Option(help="Batch size for training and evaluation")] = 8,
-):
-    """Fine-tune a RoBERTa model for classification using the label field."""
-
-    # Expand user paths
-    train_input_data_path = str(Path(train_input_data_path).expanduser())
-    val_input_data_path = str(Path(val_input_data_path).expanduser())
-    test_input_data_path = str(Path(test_input_data_path).expanduser())
-    output_path = str(Path(output_path).expanduser())
-
-    # Load datasets
-    train_data = read_data(train_input_data_path)
-    val_data = read_data(val_input_data_path)
-    test_data = read_data(test_input_data_path)
+def run_finetuning(
+    train_data: List[Dict],
+    val_data: List[Dict],
+    test_data: List[Dict],
+    model_path: str = "roberta-base",
+    output_path: str = None,
+    num_epochs: int = 0,
+    learning_rate: float = 0.00001,
+    batch_size: int = 8,
+) -> Dict:
+    """Run finetuning on datasets.
+    
+    Args:
+        train_data: Training data samples
+        val_data: Validation data samples  
+        test_data: Test data samples
+        model_path: Local or HuggingFace model path
+        output_path: Path to save model and metrics
+        num_epochs: Number of training epochs (0 to skip training)
+        learning_rate: Learning rate
+        batch_size: Batch size for training and evaluation
+        
+    Returns:
+        Dictionary containing metrics and model outputs
+    """
 
     # Get unique labels and create label mapping
     all_labels = sorted(list(set([d["label"] for d in train_data + val_data + test_data])))
@@ -158,7 +161,47 @@ def finetune(
     tokenizer.save_pretrained(output_path)
 
 
-if __name__ == "__main__":
+def finetune(
+    model_path: Annotated[str, Option(help="Local or HuggingFace model path")] = "roberta-base",
+    train_input_data_path: Annotated[str, Option(help="Path to training data")] = None,
+    val_input_data_path: Annotated[str, Option(help="Path to validation data")] = None,
+    test_input_data_path: Annotated[str, Option(help="Path to test data")] = None,
+    output_path: Annotated[str, Option(help="Path to save model and metrics")] = None,
+    num_epochs: Annotated[int, Option(help="Number of training epochs (0 to skip training)")] = 0,
+    learning_rate: Annotated[float, Option(help="Learning rate")] = 0.00001,
+    batch_size: Annotated[int, Option(help="Batch size for training and evaluation")] = 8,
+):
+    """CLI entry point to run finetuning on a dataset."""
+    # Expand user paths
+    train_input_data_path = str(Path(train_input_data_path).expanduser())
+    val_input_data_path = str(Path(val_input_data_path).expanduser())
+    test_input_data_path = str(Path(test_input_data_path).expanduser())
+    output_path = str(Path(output_path).expanduser())
+
+    # Load datasets
+    train_data = read_data(train_input_data_path)
+    val_data = read_data(val_input_data_path)
+    test_data = read_data(test_input_data_path)
+    
+    # Run finetuning
+    run_finetuning(
+        train_data=train_data,
+        val_data=val_data,
+        test_data=test_data,
+        model_path=model_path,
+        output_path=output_path,
+        num_epochs=num_epochs,
+        learning_rate=learning_rate,
+        batch_size=batch_size
+    )
+
+
+def main():
+    """CLI entry point."""
     app = typer.Typer(add_completion=False, pretty_exceptions_show_locals=False)
     app.command()(finetune)
     app()
+
+
+if __name__ == "__main__":
+    main()
