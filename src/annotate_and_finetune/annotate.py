@@ -55,7 +55,7 @@ def run_annotation(
         data["allowed_labels"] = [classes_md] * len(samples)
     
     # Run prompt and return results
-    return prompt(**data, num_proc=num_proc)
+    return pl.from_dict(prompt(**data, num_proc=num_proc)).to_dicts()
 
 
 def annotate(
