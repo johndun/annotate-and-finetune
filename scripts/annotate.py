@@ -20,7 +20,7 @@ def annotate(
     verbose: Annotated[bool, Option(help="Stream output to stdout")] = False,
     allowed_labels_path: Annotated[str, Option(help="Path to jsonlines file containing allowed labels")] = None
 ):
-    """Run a prompt from a yaml config file on a dataset."""
+    """Run a prompt on a dataset to generate a `label` field from a yaml config file."""
     
     # Expand user paths
     input_data_path = str(Path(input_data_path).expanduser())

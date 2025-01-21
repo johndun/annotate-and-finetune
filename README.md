@@ -120,12 +120,44 @@ python scripts/refine_annotation_classes.py \
 python scripts/annotate.py \
     --prompt-yaml-path scripts/ex_annotation_prompt2.yaml \
     --input-data-path ~/data/taskmaster2/taskmaster2_dialogs.jsonl \
-    --output-data-path ~/data/taskmaster2/taskmaster2_dialogs_annotated_refined_classes.jsonl \
+    --output-data-path ~/data/taskmaster2/train_samples.jsonl \
+    --allowed-labels-path ~/data/taskmaster2/refined_labels.jsonl \
+    --n-samples 500 \
+    --num-proc 2 \
+    --model claude-3-5-haiku-20241022
+python scripts/annotate.py \
+    --prompt-yaml-path scripts/ex_annotation_prompt2.yaml \
+    --input-data-path ~/data/taskmaster2/taskmaster2_dialogs.jsonl \
+    --output-data-path ~/data/taskmaster2/val_samples.jsonl \
     --allowed-labels-path ~/data/taskmaster2/refined_labels.jsonl \
     --n-samples 100 \
+    --num-proc 2 \
+    --model claude-3-5-haiku-20241022
+python scripts/annotate.py \
+    --prompt-yaml-path scripts/ex_annotation_prompt2.yaml \
+    --input-data-path ~/data/taskmaster2/taskmaster2_dialogs.jsonl \
+    --output-data-path ~/data/taskmaster2/test_samples.jsonl \
+    --allowed-labels-path ~/data/taskmaster2/refined_labels.jsonl \
+    --n-samples 100 \
+    --num-proc 2 \
     --model claude-3-5-haiku-20241022
 ```
 
+
+```bash
+aider --sonnet --no-analytics scripts/finetune.py --read scripts/annotate.py scripts/download_model.py
+```
+
+Write a command line script that downloads the huggingface model `FacebookAI/roberta-base` to the directory given in the `output-data-path` argument
+
+Command line args:
+
+- model-path: local or huggingface path
+- input-data-path (default to ~/data/taskmaster2/taskmaster2_dialogs_annotated.jsonl)
+- output-data-path (default to ~/data/taskmaster2/refined_labels.jsonl)
+- num-proc (default to 1)
+- model (default to claude-3-5-sonnet-20241022)
+- verbose (default to False)
 
 
 
