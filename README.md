@@ -141,24 +141,41 @@ python scripts/annotate.py \
     --n-samples 100 \
     --num-proc 2 \
     --model claude-3-5-haiku-20241022
+
+python scripts/download_model.py --output-path ~/models/roberta-base
+python scripts/finetune.py \
+    --model-path ~/models/roberta-base \
+    --train-input-data-path ~/data/taskmaster2/train_samples.jsonl \
+    --val-input-data-path ~/data/taskmaster2/val_samples.jsonl \
+    --test-input-data-path ~/data/taskmaster2/test_samples.jsonl \
+    --output-path ~/models/roberta-finetuned \
+    --num-epochs 1 \
+    --learning-rate 0.00001 \
+    --batch-size 4
 ```
 
 
 ```bash
-aider --sonnet --no-analytics scripts/finetune.py --read scripts/annotate.py scripts/download_model.py
+aider --sonnet --no-analytics --read scripts/annotate.py scripts/download_model.py
 ```
 
 Write a command line script that downloads the huggingface model `FacebookAI/roberta-base` to the directory given in the `output-data-path` argument
 
+```bash
+aider --sonnet --no-analytics --read scripts/annotate.py scripts/finetune.py
+```
+
+Write a command line script that fine tunes a local copy of `FacebookAI/roberta-base` using the `label` field (and classification objective) in the data. The input to the model is in the `dialog` field. Script should calculate detailed classification metrics on the validation and test sets and save them to the output directory.
+
 Command line args:
 
 - model-path: local or huggingface path
-- input-data-path (default to ~/data/taskmaster2/taskmaster2_dialogs_annotated.jsonl)
-- output-data-path (default to ~/data/taskmaster2/refined_labels.jsonl)
-- num-proc (default to 1)
-- model (default to claude-3-5-sonnet-20241022)
-- verbose (default to False)
-
+- train-input-data-path
+- val-input-data-path
+- test-input-data-path
+- output-path: path to save model and metrics
+- num_epochs: default to 1
+- learning_rate: default to 0.00001
 
 
 ```python
