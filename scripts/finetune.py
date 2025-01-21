@@ -27,21 +27,21 @@ def compute_metrics(pred: EvalPrediction) -> Dict:
     report = classification_report(labels, preds, output_dict=True)
     conf_matrix = confusion_matrix(labels, preds)
     
-    metrics = {
-        "accuracy": report["accuracy"],
-        "macro_f1": report["macro avg"]["f1-score"],
-        "weighted_f1": report["weighted avg"]["f1-score"],
-        "confusion_matrix": conf_matrix.tolist()
-    }
+    # metrics = {
+    #     "accuracy": report["accuracy"],
+    #     "macro_f1": report["macro avg"]["f1-score"],
+    #     "weighted_f1": report["weighted avg"]["f1-score"],
+    #     "confusion_matrix": conf_matrix.tolist()
+    # }
     
-    # Add per-class metrics
-    for label, scores in report.items():
-        if isinstance(scores, dict):
-            for metric, value in scores.items():
-                if label not in ["macro avg", "weighted avg"]:
-                    metrics[f"{label}_{metric}"] = value
+    # # Add per-class metrics
+    # for label, scores in report.items():
+    #     if isinstance(scores, dict):
+    #         for metric, value in scores.items():
+    #             if label not in ["macro avg", "weighted avg"]:
+    #                 metrics[f"{label}_{metric}"] = value
                     
-    return metrics
+    return report
 
 
 def finetune(
