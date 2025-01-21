@@ -1,9 +1,11 @@
-task: Label user requests in a dialog.
+task: Generate a fine grain labels for a dialog
 inputs:
   - name: dialog
     description: A dialog between a user and an assistant
 outputs:
+  - name: thinking
+    description: Begin by thinking step by step
   - name: label
     description: A high-level category for the type of dialog
 details: |-
-  Request type labels should capture the user's intention, what they are trying to accomplish. Labels should be concise and use title case.
+  Dialog categories should capture the user's intention, what they are trying to accomplish. Labels should be concise and use title case.

@@ -5,8 +5,10 @@ inputs:
   - name: allowed_labels
     description: The set of allowed labels
 outputs:
+  - name: thinking
+    description: Begin by thinking step by step
   - name: label
-    description: A high-level category for the type of dialog
+    description: A dialog label selected from `allowed_labels`
     evaluations:
       - type: llm
-        value: Is one of the allowed labels
+        value: Exactly matches one of the `allowed_labels`

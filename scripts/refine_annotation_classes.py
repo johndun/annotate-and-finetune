@@ -44,14 +44,12 @@ def refine_labels(
     # Load config
     with open(prompt_yaml_path) as f:
         config = yaml.safe_load(f)
+
+    config["model"] = model
+    config["verbose"] = verbose
     
     # Initialize prompt
-    prompt = PromptModule(
-        inputs=config["inputs"],
-        outputs=config["outputs"],
-        model=model,
-        verbose=verbose
-    )
+    prompt = PromptModule(**config)
     if verbose:
         print(prompt.prompt)
     
@@ -63,7 +61,7 @@ def refine_labels(
     results = prompt(labels=label_table, num_proc=num_proc)
     
     # Extract refined labels and save
-    write_data([{"refined_labels": results["refined_labels"]}], output_data_path)
+    write_data(results["refined_labels"], output_data_path)
 
 if __name__ == "__main__":
     app = typer.Typer(add_completion=False, pretty_exceptions_show_locals=False)

@@ -76,7 +76,7 @@ Command line args:
 - verbose (default to False)
 
 ```bash
-aider --sonnet --no-analytics --read scripts/annotate.py  --read scripts/ex_anno_refinement__prompt.yaml scripts/refine_annotation_classes.py
+aider --sonnet --no-analytics --read scripts/annotate.py  --read scripts/ex_anno_refinement_prompt.yaml scripts/refine_annotation_classes.py
 ```
 
 Write a command line script that:
@@ -90,7 +90,7 @@ Write a command line script that:
 Command line args:
 
 - prompt-yaml-path (default to scripts/ex_anno_refinement__prompt.yaml)
-- input-data-path (default to ~/data/taskmaster2/taskmaster2_dialogs.jsonl)
+- input-data-path (default to ~/data/taskmaster2/taskmaster2_dialogs_annotated.jsonl)
 - output-data-path (default to ~/data/taskmaster2/refined_labels.jsonl)
 - num-proc (default to 1)
 - model (default to claude-3-5-sonnet-20241022)
@@ -107,6 +107,50 @@ Update the script so that it has an allowed_classes_path argument that defaults 
 ```bash
 python scripts/prepare_taskmaster2_dialog_dataset.py
 python scripts/prepare_taskmaster2_turn_dataset.py
-python scripts/annotate.py
-python scripts/refine_annotation_classes.py
+python scripts/annotate.py \
+    --prompt-yaml-path scripts/ex_annotation_prompt.yaml \
+    --input-data-path ~/data/taskmaster2/taskmaster2_dialogs.jsonl \
+    --output-data-path ~/data/taskmaster2/taskmaster2_dialogs_annotated.jsonl \
+    --n-samples 100 \
+    --model claude-3-5-haiku-20241022
+python scripts/refine_annotation_classes.py \
+    --input-data-path ~/data/taskmaster2/taskmaster2_dialogs_annotated.jsonl \
+    --output-data-path ~/data/taskmaster2/refined_labels.jsonl \
+    --verbose
+python scripts/annotate.py \
+    --prompt-yaml-path scripts/ex_annotation_prompt2.yaml \
+    --input-data-path ~/data/taskmaster2/taskmaster2_dialogs.jsonl \
+    --output-data-path ~/data/taskmaster2/taskmaster2_dialogs_annotated_refined_classes.jsonl \
+    --allowed-labels-path ~/data/taskmaster2/refined_labels.jsonl \
+    --n-samples 100 \
+    --model claude-3-5-haiku-20241022
+```
+
+
+
+
+```python
+import polars as pl
+from llmpipe import read_data
+from annotate_and_finetune.summarize_list import summarize_list
+df = read_data("~/data/taskmaster2/taskmaster2_dialogs_annotated_refined_classes.jsonl", as_df=True)
+data = df.to_dict(as_series=False)
+
+result = []
+result.append("## Dialog Categories")
+
+labels = read_data("~/data/taskmaster2/refined_labels.jsonl", as_df=False)
+label_str = []
+for x in labels:
+    label_str.append(f"- {x['label']}: {x['description']}")
+
+result.append("\n".join(label_str))
+
+result.append(f"## Data Summary: dialog")
+result.append(summarize_list(data["dialog"], n_examples=3))
+
+result.append(f"## Data Summary: Annotation Labels")
+result.append(summarize_list(data["label"], n_examples=100))
+
+print("\n\n".join(result))
 ```

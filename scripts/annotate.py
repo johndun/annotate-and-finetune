@@ -18,7 +18,7 @@ def annotate(
     num_proc: Annotated[int, Option(help="Number of processes to use")] = 1,
     model: Annotated[str, Option(help="LiteLLM model identifier")] = "claude-3-5-sonnet-20241022",
     verbose: Annotated[bool, Option(help="Stream output to stdout")] = False,
-    allowed_classes_path: Annotated[str, Option(help="Path to jsonlines file containing allowed classes")] = None
+    allowed_labels_path: Annotated[str, Option(help="Path to jsonlines file containing allowed labels")] = None
 ):
     """Run a prompt from a yaml config file on a dataset."""
     
@@ -29,14 +29,14 @@ def annotate(
     # Load config
     with open(prompt_yaml_path) as f:
         config = yaml.safe_load(f)
+
+    config["model"] = model
+    config["verbose"] = verbose
     
     # Initialize prompt
-    prompt = PromptModule(
-        inputs=config["inputs"],
-        outputs=config["outputs"],
-        model=model,
-        verbose=verbose
-    )
+    prompt = PromptModule(**config)
+    if verbose:
+        print(prompt.prompt)
     
     # Load data
     samples = read_data(input_data_path)
@@ -49,12 +49,12 @@ def annotate(
     data = pl.from_dicts(samples).to_dict(as_series=False)
     
     # Load and process allowed classes if provided
-    if allowed_classes_path:
-        allowed_classes_path = str(Path(allowed_classes_path).expanduser())
-        classes = read_data(allowed_classes_path)
+    if allowed_labels_path:
+        allowed_labels_path = str(Path(allowed_labels_path).expanduser())
+        classes = read_data(allowed_labels_path)
         # Convert classes to markdown list
-        classes_md = "\n".join([f"- {c['class']}" for c in classes])
-        data["allowed_classes"] = [classes_md] * len(samples)
+        classes_md = "\n".join([f"- {c['label']}: {c['description']}" for c in classes])
+        data["allowed_labels"] = [classes_md] * len(samples)
     
     # Run prompt
     results = prompt(**data, num_proc=num_proc)
