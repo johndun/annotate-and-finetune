@@ -149,8 +149,7 @@ python scripts/finetune.py \
     --val-input-data-path ~/data/taskmaster2/val_samples.jsonl \
     --test-input-data-path ~/data/taskmaster2/test_samples.jsonl \
     --output-path ~/models/roberta-finetuned \
-    --num-epochs 1 \
-    --learning-rate 0.00001 \
+    --num-epochs 0 \
     --batch-size 4
 ```
 
@@ -177,8 +176,14 @@ Command line args:
 - num_epochs: default to 1
 - learning_rate: default to 0.00001
 
+Update scripts/finetune.py:
+
+- Update the metrics so that the class level metrics use the labels
+- Add hyperparams to metrics
+
 
 ```python
+import json
 import polars as pl
 from llmpipe import read_data
 from annotate_and_finetune.summarize_list import summarize_list
@@ -200,6 +205,10 @@ result.append(summarize_list(data["dialog"], n_examples=3))
 
 result.append(f"## Data Summary: Annotation Labels")
 result.append(summarize_list(data["label"], n_examples=100))
+
+result.append(f"## Best Performing Model Metrics")
+with open("/Users/johndunavent/models/roberta-finetuned/metrics.json", "r") as f:
+    result.append(json.dumps(json.load(f), indent=2))
 
 print("\n\n".join(result))
 ```
