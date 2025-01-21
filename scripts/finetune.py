@@ -23,8 +23,12 @@ def compute_metrics(pred: EvalPrediction, id2label: Dict[int, str] = None) -> Di
     labels = pred.label_ids
     preds = pred.predictions.argmax(-1)
     
+    # Get unique labels that are actually present in the data
+    unique_labels = sorted(set(labels) | set(preds))
+    target_names = [id2label[i] for i in unique_labels]
+    
     # Get detailed classification metrics
-    report = classification_report(labels, preds, output_dict=True, target_names=[id2label[i] for i in sorted(id2label.keys())])
+    report = classification_report(labels, preds, output_dict=True, target_names=target_names, labels=unique_labels)
     
     # Add model preparation time
     metrics = {"model_preparation_time": 0.0009}  # Placeholder value
