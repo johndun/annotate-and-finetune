@@ -143,6 +143,9 @@ python scripts/annotate.py \
     --model claude-3-5-haiku-20241022
 
 python scripts/download_model.py --output-path ~/models/roberta-base
+python scripts/download_model.py \
+    --model-name prajjwal1/bert-tiny \
+    --output-path ~/models/bert-tiny
 python scripts/finetune.py \
     --model-path ~/models/roberta-base \
     --train-input-data-path ~/data/taskmaster2/train_samples.jsonl \
