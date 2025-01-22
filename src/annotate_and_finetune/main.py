@@ -31,7 +31,7 @@ def run_pipeline(
         num_proc: Number of processes for parallel annotation
         verbose: Enable verbose output
     """
-    # Load and parse config
+    print("Loading config file...")
     config = load_config(config_path)
     
     # Extract config values
@@ -54,7 +54,7 @@ def run_pipeline(
     learning_rate = config.get("learning_rate", 0.00001)
     batch_size = config.get("batch_size", 8)
 
-    # Load and prepare data
+    print(f"Loading data from {data_path}...")
     samples_df = read_data(data_path, as_df=True).with_row_index(id_col)
     if "label" in samples_df.columns:
         samples_df = samples_df.rename({"label": "gt_label"})
@@ -103,7 +103,9 @@ outputs:
         batch_annotation_config
     )
 
-    # Run annotation
+    print("\nStarting annotation phase...")
+    print(f"Using model: {model}")
+    print(f"Annotation batch size: {annotation_batch_size}")
     if annotation_batch_size == 1:
         annotated_samples = run_annotation(
             config=annotation_config,
@@ -143,13 +145,15 @@ outputs:
             on="id", how="inner"
         ).to_dicts()
 
-    # Split data
+    print("\nSplitting data into train/val/test sets...")
     train_samples, val_samples, test_samples = split_data(
         annotated_samples,
         [1 - 2 * val_test_prop, val_test_prop, val_test_prop]
     )
 
-    # Run fine-tuning
+    print("\nStarting fine-tuning phase...")
+    print(f"Using model: {model_path}")
+    print(f"Training for {num_epochs} epochs")
     run_finetuning(
         train_data=train_samples,
         val_data=val_samples,
