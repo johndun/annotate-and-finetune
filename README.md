@@ -215,3 +215,9 @@ with open("/Users/johndunavent/models/roberta-finetuned/metrics.json", "r") as f
 
 print("\n\n".join(result))
 ```
+
+
+
+```bash
+python src/annotate_and_finetune/main.py --config-path scripts/test_config.yaml
+```

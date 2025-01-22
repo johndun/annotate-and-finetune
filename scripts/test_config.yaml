@@ -1,0 +1,15 @@
+n_samples: 10
+annotation_batch_size: 10
+allowed_labels:
+  - label: SPORTS
+    description: A dialog related to sports
+  - label: OTHER
+    description: Everything else
+task: Label dialogs.
+context_col: dialogs
+context_description: A table of dialogs between a user and an assistant
+id_col: id
+data_path: ~/data/taskmaster2/taskmaster2_dialogs.jsonl
+model_path: /Users/johndunavent/models/roberta-base
+val_test_prop: 0.2
+output_path: ~/models/deleteme
