@@ -8,9 +8,9 @@ import typer
 from typer import Option
 
 from llmpipe import read_data
-from .annotate import run_annotation
-from .finetune import run_finetuning
-from .split_data import split_data
+from annotate_and_finetune.annotate import run_annotation
+from annotate_and_finetune.finetune import run_finetuning
+from annotate_and_finetune.split_data import split_data
 
 
 def load_config(config_path: str) -> dict:
@@ -38,7 +38,7 @@ def run_pipeline(
     model = config.get("model", "anthropic/claude-3-sonnet-20240229")
     allowed_labels = config["allowed_labels"]
     task = config["task"]
-    details = config.get("details", "")
+    details = config.get("details")
     context_col = config["context_col"]
     context_description = config["context_description"]
     id_col = config.get("id_col", "id")
@@ -50,7 +50,7 @@ def run_pipeline(
     # Extract training parameters from config
     n_samples = config.get("n_samples", 10)
     annotation_batch_size = config.get("annotation_batch_size", 10)
-    num_epochs = config.get("num_epochs", 3)
+    num_epochs = config.get("num_epochs", 1)
     learning_rate = config.get("learning_rate", 0.00001)
     batch_size = config.get("batch_size", 8)
 
