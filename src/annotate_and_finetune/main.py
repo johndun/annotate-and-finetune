@@ -22,24 +22,14 @@ def load_config(config_path: str) -> dict:
 def run_pipeline(
     config_path: Annotated[str, Option(help="Path to YAML config file")] = None,
     num_proc: Annotated[int, Option(help="Number of processes for annotation")] = 2,
-    n_samples: Annotated[int, Option(help="Number of samples to annotate")] = 10,
-    annotation_batch_size: Annotated[int, Option(help="Batch size for annotation")] = 10,
     verbose: Annotated[bool, Option(help="Enable verbose output")] = False,
-    num_epochs: Annotated[int, Option(help="Number of training epochs")] = 3,
-    learning_rate: Annotated[float, Option(help="Learning rate")] = 0.00001,
-    batch_size: Annotated[int, Option(help="Training batch size")] = 8,
 ):
     """Run the full annotation and fine-tuning pipeline.
     
     Args:
         config_path: Path to YAML config file containing pipeline settings
         num_proc: Number of processes for parallel annotation
-        n_samples: Number of samples to annotate
-        annotation_batch_size: Batch size for annotation
         verbose: Enable verbose output
-        num_epochs: Number of training epochs
-        learning_rate: Learning rate for training
-        batch_size: Batch size for training
     """
     # Load and parse config
     config = load_config(config_path)
@@ -56,6 +46,13 @@ def run_pipeline(
     model_path = str(Path(config["model_path"]).expanduser())
     val_test_prop = config.get("val_test_prop", 0.2)
     output_path = str(Path(config["output_path"]).expanduser())
+    
+    # Extract training parameters from config
+    n_samples = config.get("n_samples", 10)
+    annotation_batch_size = config.get("annotation_batch_size", 10)
+    num_epochs = config.get("num_epochs", 3)
+    learning_rate = config.get("learning_rate", 0.00001)
+    batch_size = config.get("batch_size", 8)
 
     # Load and prepare data
     samples_df = read_data(data_path, as_df=True).with_row_index(id_col)
