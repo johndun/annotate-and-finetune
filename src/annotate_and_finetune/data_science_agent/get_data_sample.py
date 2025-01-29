@@ -50,16 +50,15 @@ def get_data_sample(
     samples = [df.row(idx, named=True) for idx in random_indices]
     truncated_samples = [truncate_sample(sample) for sample in samples]
     
-    # Print samples
-    for i, truncated in enumerate(truncated_samples, 1):
-        print(f"\nSample {i}:")
-        print(json.dumps(truncated, indent=2))
-    
-    # Save samples if output path provided
+    # Either print samples or save to file
     if output_path:
         with open(output_path, "w") as f:
             f.write(json.dumps(samples, indent=True))
-        print(f"\nSaved {n_samples} samples to {output_path}")
+        print(f"Saved {n_samples} samples to {output_path}")
+    else:
+        for i, truncated in enumerate(truncated_samples, 1):
+            print(f"\nSample {i}:")
+            print(json.dumps(truncated, indent=2))
 
 
 if __name__ == "__main__":
