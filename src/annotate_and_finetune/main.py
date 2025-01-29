@@ -2,12 +2,13 @@ from pathlib import Path
 from typing import Annotated
 import yaml
 import json
+import os
 import polars as pl
 from itertools import chain
 import typer
 from typer import Option
 
-from llmpipe import read_data
+from llmpipe import read_data, write_data
 from annotate_and_finetune.annotate import run_annotation
 from annotate_and_finetune.finetune import run_finetuning
 from annotate_and_finetune.split_data import split_data
@@ -45,7 +46,8 @@ def run_pipeline(
     data_path = str(Path(config["data_path"]).expanduser())
     model_path = str(Path(config["model_path"]).expanduser())
     val_test_prop = config.get("val_test_prop", 0.2)
-    output_path = str(Path(config["output_path"]).expanduser())
+    model_output_path = str(Path(config["model_output_path"]).expanduser())
+    data_output_path = str(Path(config["data_output_path"]).expanduser())
     
     # Extract training parameters from config
     n_samples = config.get("n_samples", 10)
@@ -55,7 +57,7 @@ def run_pipeline(
     batch_size = config.get("batch_size", 8)
 
     print(f"Loading data from {data_path}...")
-    samples_df = read_data(data_path, as_df=True).with_row_index(id_col)
+    samples_df = read_data(data_path, as_df=True)
     if "label" in samples_df.columns:
         samples_df = samples_df.rename({"label": "gt_label"})
     samples = samples_df.to_dicts()
@@ -80,8 +82,8 @@ outputs:
 task: {task}
 details: {details}
 inputs:
-  - name: {context_col}
-    description: {context_description}
+  - name: annotation_inputs
+    description: A table of annotation inputs
   - name: allowed_labels
     description: The set of allowed labels
 outputs:
@@ -91,8 +93,8 @@ outputs:
     type: jsonlines
     description: A table with annotated labels
     fields:
-      - name: id
-        description: An id from `{context_col}`
+      - name: {id_col}
+        description: An id from `annotation_inputs`
       - name: label
         description: A label selected from `allowed_labels`
 """
@@ -124,10 +126,10 @@ outputs:
     else:
         batches = []
         for i in range(0, len(samples), annotation_batch_size):
-            batch = [{k: x[k] for k in ("id", "dialog")} for x in samples[i: i + annotation_batch_size]]
+            batch = [{k: x[k] for k in (id_col, context_col)} for x in samples[i: i + annotation_batch_size]]
             batches.append("\n".join([json.dumps(x) for x in batch]))
 
-        batched_samples = [{context_col: x} for x in batches]
+        batched_samples = [{"annotation_inputs": x} for x in batches]
 
         batch_annotated_samples = run_annotation(
             config=annotation_config,
@@ -141,8 +143,8 @@ outputs:
 
         labels = list(chain(*[x["labels"] for x in batch_annotated_samples if x["labels"] is not None]))
         annotated_samples = pl.from_dicts(samples).join(
-            pl.from_dicts(labels).with_columns(id=pl.col("id").cast(pl.UInt32)),
-            on="id", how="inner"
+            pl.from_dicts(labels).with_columns(pl.col(id_col).cast(pl.UInt32).alias(id_col)),
+            on=id_col, how="inner"
         ).to_dicts()
 
     print("\nSplitting data into train/val/test sets...")
@@ -151,6 +153,12 @@ outputs:
         [1 - 2 * val_test_prop, val_test_prop, val_test_prop]
     )
 
+    print("\nSaving annotated dataset...")
+    os.makedirs(data_output_path, exist_ok=True)
+    write_data(train_samples, f"{data_output_path}/train.jsonl")
+    write_data(val_samples, f"{data_output_path}/val.jsonl")
+    write_data(test_samples, f"{data_output_path}/test.jsonl")
+
     print("\nStarting fine-tuning phase...")
     print(f"Using model: {model_path}")
     print(f"Training for {num_epochs} epochs")
@@ -158,8 +166,9 @@ outputs:
         train_data=train_samples,
         val_data=val_samples,
         test_data=test_samples,
+        input_field=context_col,
         model_path=model_path,
-        output_path=output_path,
+        output_path=model_output_path,
         num_epochs=num_epochs,
         learning_rate=learning_rate,
         batch_size=batch_size,

@@ -51,6 +51,7 @@ def run_finetuning(
     train_data: List[Dict],
     val_data: List[Dict],
     test_data: List[Dict],
+    input_field: str = "text",
     model_path: str = "roberta-base",
     output_path: str = None,
     num_epochs: int = 0,
@@ -63,6 +64,7 @@ def run_finetuning(
         train_data: Training data samples
         val_data: Validation data samples  
         test_data: Test data samples
+        input_field: The field to use as input to the transformer
         model_path: Local or HuggingFace model path
         output_path: Path to save model and metrics
         num_epochs: Number of training epochs (0 to skip training)
@@ -78,17 +80,13 @@ def run_finetuning(
     label2id = {label: i for i, label in enumerate(all_labels)}
     id2label = {i: label for label, i in label2id.items()}
     num_labels = len(all_labels)
+    for samples in (train_data, val_data, test_data):
+        for sample in samples:
+            sample["label"] = label2id[sample["label"]]
 
-    # Convert to HF datasets
-    def convert_to_dataset(data: List[Dict]) -> Dataset:
-        return Dataset.from_dict({
-            "text": [d["dialog"] for d in data],
-            "label": [label2id[d["label"]] for d in data]
-        })
-
-    train_dataset = convert_to_dataset(train_data)
-    val_dataset = convert_to_dataset(val_data)
-    test_dataset = convert_to_dataset(test_data)
+    train_dataset = Dataset.from_list(train_data)
+    val_dataset = Dataset.from_list(val_data)
+    test_dataset = Dataset.from_list(test_data)
 
     # Load tokenizer and model
     tokenizer = AutoTokenizer.from_pretrained(model_path)
@@ -101,7 +99,7 @@ def run_finetuning(
 
     # Tokenization function
     def tokenize_function(examples):
-        return tokenizer(examples["text"], padding="max_length", truncation=True)
+        return tokenizer(examples[input_field], padding="max_length", truncation=True)
 
     # Tokenize datasets
     train_dataset = train_dataset.map(tokenize_function, batched=True)
@@ -166,6 +164,7 @@ def finetune(
     train_input_data_path: Annotated[str, Option(help="Path to training data")] = None,
     val_input_data_path: Annotated[str, Option(help="Path to validation data")] = None,
     test_input_data_path: Annotated[str, Option(help="Path to test data")] = None,
+    input_field: Annotated[str, Option(help="The field to use as input to the transformer")] = "text",
     output_path: Annotated[str, Option(help="Path to save model and metrics")] = None,
     num_epochs: Annotated[int, Option(help="Number of training epochs (0 to skip training)")] = 0,
     learning_rate: Annotated[float, Option(help="Learning rate")] = 0.00001,
@@ -188,6 +187,7 @@ def finetune(
         train_data=train_data,
         val_data=val_data,
         test_data=test_data,
+        input_field=input_field,
         model_path=model_path,
         output_path=output_path,
         num_epochs=num_epochs,
