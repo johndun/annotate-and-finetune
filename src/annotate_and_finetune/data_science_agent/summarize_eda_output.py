@@ -12,7 +12,8 @@ from llmpipe.prompt_module2 import PromptModule2
 def summarize_eda_output(
     input_path: Annotated[str, Option(help="Path to eda output")],
     output_path: Annotated[str, Option(help="Path to save the schema")] = None,
-    model: Annotated[str, Option(help="A LiteLLM model identifier")] = "claude-3-5-sonnet-20241022-v2"
+    model: Annotated[str, Option(help="A LiteLLM model identifier")] = "claude-3-5-sonnet-20241022-v2",
+    verbose: Annotated[bool, Option(help="Stream output to stdout")] = False
 ):
     """Draft document text using EDA results."""
     # Read the data
@@ -28,8 +29,11 @@ def summarize_eda_output(
             Output("thinking", "Begin by thinking step by step"),
             Output("document", "A document containing a detailed, comprehensive summary. No title.")
         ],
-        model=model
+        model=model,
+        verbose=verbose
     )
+    if verbose:
+        print(module.prompt)
     response = module(eda_results=eda_results)
 
     # Save if output path provided
@@ -39,6 +43,7 @@ def summarize_eda_output(
         print(f"\nSaved to {output_path}")
     else:
         print(response["document"])
+
 
 if __name__ == "__main__":
     app = typer.Typer(add_completion=False, pretty_exceptions_show_locals=False)

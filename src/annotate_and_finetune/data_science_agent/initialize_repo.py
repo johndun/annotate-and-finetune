@@ -26,6 +26,9 @@ def initialize_repo(
     
     # Create logs subdirectory
     (output_path / "logs").mkdir()
+
+    # Create notes subdirectory
+    (output_path / "notes").mkdir()
     
     # Get current directory path
     current_dir = Path(__file__).parent

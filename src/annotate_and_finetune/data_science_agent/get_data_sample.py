@@ -39,7 +39,7 @@ def get_data_sample(
     samples = read_data(data_path)
     
     # Convert to DataFrame
-    df = pl.from_dicts(samples)
+    df = pl.from_dicts(samples, infer_schema_length=100000)
     
     # Get random samples
     total_rows = len(df)

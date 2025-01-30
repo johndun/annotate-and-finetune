@@ -139,7 +139,7 @@ from llmpipe import Input, Output, JsonlinesOutput, PromptModule, RevisorModule
 
 
 # Config
-model = "claude-3-5-sonnet-20241022"
+model = "bedrock/anthropic.claude-3-5-haiku-20241022-v1:0"
 verbose = True
 
 # Inputs
@@ -166,12 +166,13 @@ poem_table = JsonlinesOutput(
 
 poet = PromptModule(
     inputs=[n],
-    outputs=[thinking, poem_table3],
+    outputs=[thinking, poem_table],
     verbose=False,
     model=model
 )
-# print(poet.prompt)
-# response = poet(n=5)
+print(poet.prompt)
+response = poet(n=5)
+
 # print(json.dumps(response, indent=2))
 critic = RevisorModule(
     outputs=[topic, style, poem],

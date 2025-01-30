@@ -12,7 +12,8 @@ from llmpipe.prompt_module2 import PromptModule2
 def generate_data_schema(
     data_sample_path: Annotated[str, Option(help="Path to dataset samples")],
     output_path: Annotated[str, Option(help="Path to save the schema")] = None,
-    model: Annotated[str, Option(help="A LiteLLM model identifier")] = "claude-3-5-sonnet-20241022-v2"
+    model: Annotated[str, Option(help="A LiteLLM model identifier")] = "claude-3-5-sonnet-20241022-v2",
+    verbose: Annotated[bool, Option(help="Stream output to stdout")] = False
 ):
     """Print random samples from a dataset with truncated long values."""
     # Read the data
@@ -28,9 +29,9 @@ def generate_data_schema(
             Output("thinking", "Begin by thinking step by step"),
             Output("data_schema", "The data schema as a markdown table")
         ],
-        model=model
+        model=model,
+        verbose=verbose
     )
-    # print(module.prompt)
     response = module(data_samples=data_sample)
 
     # Save schema if output path provided
