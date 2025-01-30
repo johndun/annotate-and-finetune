@@ -9,7 +9,7 @@ from llmpipe import Input, Output
 from llmpipe.prompt_module2 import PromptModule2
 
 
-def get_data_schema(
+def generate_data_schema(
     data_sample_path: Annotated[str, Option(help="Path to dataset samples")],
     output_path: Annotated[str, Option(help="Path to save the schema")] = None,
     model: Annotated[str, Option(help="A LiteLLM model identifier")] = "claude-3-5-sonnet-20241022-v2"
@@ -26,7 +26,7 @@ def get_data_schema(
         ],
         outputs=[
             Output("thinking", "Begin by thinking step by step"),
-            Output("data_schema", "Data schema")
+            Output("data_schema", "The data schema as a markdown table")
         ],
         model=model
     )
@@ -36,6 +36,7 @@ def get_data_schema(
     # Save schema if output path provided
     if output_path:
         with open(output_path, "w") as f:
+            f.write("The data schema:\n\n")
             f.write(response["data_schema"])
         print(f"\nSaved schema to {output_path}")
     else:
@@ -43,5 +44,5 @@ def get_data_schema(
 
 if __name__ == "__main__":
     app = typer.Typer(add_completion=False, pretty_exceptions_show_locals=False)
-    app.command()(get_data_schema)
+    app.command()(generate_data_schema)
     app()

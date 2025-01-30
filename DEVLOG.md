@@ -44,11 +44,11 @@ Inputs:
 # Initialize a repo
 python -m annotate_and_finetune.data_science_agent.initialize_repo --repo-path ~/test_repo
 
-# Generate a file in the repo containing 5 random records from the data
-python -m annotate_and_finetune.data_science_agent.get_data_sample --data-path dummy_data.jsonl --output-path ~/test_repo/sample_data.md --n-samples 3
+# Generate a file in the repo containing 3 random records from the data
+python -m annotate_and_finetune.data_science_agent.get_data_sample --data-path ~/data/imdb-train.jsonl --output-path ~/test_repo/sample_data.md --n-samples 3
 
 # Generate a file in the repo containing a data schema
-python -m annotate_and_finetune.data_science_agent.get_data_schema \
+python -m annotate_and_finetune.data_science_agent.generate_data_schema \
     --data-sample-path ~/test_repo/sample_data.md \
     --output-path ~/test_repo/data_schema.md \
     --model claude-3-5-sonnet-20241022
@@ -58,53 +58,37 @@ python -m annotate_and_finetune.data_science_agent.git_commit \
     --repo-path ~/test_repo \
     --commit-message "Initial commit"
 
-# Run a task
-python -m annotate_and_finetune.data_science_agent.run_aider_task \
+# Run an EDA task
+python -m annotate_and_finetune.data_science_agent.generate_eda_script \
     --repo-path ~/test_repo \
-    --data-path dummy_data.jsonl \
-    --task "Generate univariate summary statistics for the dataset" \
+    --data-path ~/data/imdb-train.jsonl \
+    --task "Generate univariate summary statistics. Include missing value counts. Include distinct value counts. Include a table of frequency counts for fields with fewer than 20 distinct values." \
+    --script-name univariate_summaries.py \
     --model claude-3-5-sonnet-20241022
 
-# Input
-- EDA task
+# Run an EDA task
+python -m annotate_and_finetune.data_science_agent.generate_eda_script \
+    --repo-path ~/test_repo \
+    --data-path ~/data/imdb-train.jsonl \
+    --task "Analyze movie review sentiment patterns with the following steps:\n\n1. Text preprocessing:\n   - Remove common stop words (excluding basic negation words like 'not')\n   - Convert to lowercase\n   - Remove punctuation\n\n2. For both positive and negative reviews:\n   - Calculate average review length\n   - Find most common meaningful words (excluding stop words)\n   - Calculate relative word frequencies (percentage of total words)\n   - Identify distinctive words (words that appear significantly more in one sentiment vs the other)\n\n3. Create comparison metrics:\n   - Top 20 words unique to each sentiment\n   - Chi-square test for word frequency differences\n   - Word frequency ratios between positive and negative reviews\n\nUse pandas for data manipulation and numpy/scipy for statistical calculations." \
+    --script-name word_distributions.py \
+    --model claude-3-5-sonnet-20241022
 
-# Generate subtasks
-  - script
-  - script execution
+# Summarize EDA logs
+python -m annotate_and_finetune.data_science_agent.summarize_eda_output \
+    --input-path ~/test_repo/data_schema.md \
+    --model claude-3-5-sonnet-20241022
+python -m annotate_and_finetune.data_science_agent.summarize_eda_output \
+    --input-path ~/test_repo/sample_data.md \
+    --model claude-3-5-sonnet-20241022
+python -m annotate_and_finetune.data_science_agent.summarize_eda_output \
+    --input-path ~/test_repo/logs/univariate_summaries.log \
+    --model claude-3-5-sonnet-20241022
+python -m annotate_and_finetune.data_science_agent.summarize_eda_output \
+    --input-path ~/test_repo/logs/word_distributions.log \
+    --model claude-3-5-sonnet-20241022
 
-
-
-## Prompt for task translation
-
-aider --no-show-model-warnings --model bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0 --read src/data_science_agent/get_data_schema.py src/data_science_agent/get_eda_script_task.py
-
-Write a cli script that will generate detailed script requirements for a data science task using an LLM. The below YAML file describes the inputs to PromptModule2.
-
-Your script should have the following inputs:
-- schema_path: str  # Path to the data schema
-- task: str  # The EDA task to generate detailed requirements for
-
-```yaml
-task: |-
-  Generate exploratory data analysis (EDA) script requirements for a data science task. EDA scripts should only print outputs (to be used to inform future analyses and/or write research summary documents). Script should input a single dataset (schema defined below) and may have additional command line arguments.
-
-  Example:
-
-  <example>
-  Write a cli script that prints random samples from a dataset. Needs to handle cases where strings and list types are extremely long by truncating to a reasonable maximum number of items. Samples should be printed as json-like.
-
-  Inputs:
-  - data_path: str
-  - n_samples: int = 5
-  </example>
-inputs:
-  - name: schema
-    description: The data schema
-  - name: task
-    description: A data science task
-outputs:
-  - name: thinking
-    description: Begin by thinking step by step
-  - name: eda_script_task
-    description: Task containing requirements for an exploratory data analysis script
-```
+python -m annotate_and_finetune.data_science_agent.revise_eda_task \
+    --task "Create a table comparing the most common words across the different label values" \
+    --input-path ~/test_repo/logs/word_distributions.log \
+    --model claude-3-5-sonnet-20241022
