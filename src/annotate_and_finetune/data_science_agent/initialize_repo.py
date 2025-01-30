@@ -27,6 +27,10 @@ def initialize_repo(
     # Create logs subdirectory
     (output_path / "logs").mkdir()
     
+    # Copy template files
+    shutil.copy("cli_script_template.py", output_path / "cli_script_template.py")
+    shutil.copy("data_io_template.py", output_path / "data_io_template.py")
+    
     # Initialize git repository
     git.Repo.init(output_path)
     
