@@ -12,7 +12,7 @@ from llmpipe.prompt_module2 import PromptModule2
 def get_data_schema(
     data_sample_path: Annotated[str, Option(help="Path to dataset samples")],
     output_path: Annotated[str, Option(help="Path to save the schema")] = None,
-    model: Annotated[str, Option(help="A LiteLLM model identifier")] = "bedrock/anthropic.claude-3-5-haiku-20241022-v1:0"
+    model: Annotated[str, Option(help="A LiteLLM model identifier")] = "claude-3-5-sonnet-20241022-v2"
 ):
     """Print random samples from a dataset with truncated long values."""
     # Read the data
@@ -30,16 +30,16 @@ def get_data_schema(
         ],
         model=model
     )
-    print(module.prompt)
+    # print(module.prompt)
     response = module(data_samples=data_sample)
-    print(response["data_schema"])
 
     # Save schema if output path provided
     if output_path:
         with open(output_path, "w") as f:
             f.write(response["data_schema"])
         print(f"\nSaved schema to {output_path}")
-
+    else:
+        print(response["data_schema"])
 
 if __name__ == "__main__":
     app = typer.Typer(add_completion=False, pretty_exceptions_show_locals=False)

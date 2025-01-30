@@ -1,6 +1,6 @@
 ## Script to initialize a git repo
 
-aider --model bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0 --read cli_script_template.py src/data_science_agent/initialize_repo.py
+aider --model claude-3-5-sonnet-20241022 --read cli_script_template.py src/data_science_agent/initialize_repo.py
 
 Write a cli script that initializes an empty git repo. If `output_dir` exists, it should be emptied. If not, create it. Then, initialize an empty git repo.
 
@@ -22,7 +22,7 @@ Inputs:
 
 ## Script to generate a data sample
 
-aider --no-show-model-warnings --model bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0 --read data_io_template.py --read cli_script_template.py src/data_science_agent/get_data_sample.py
+aider --no-show-model-warnings --model claude-3-5-sonnet-20241022-v2 src/annotate_and_finetune/data_science_agent/get_data_sample.py
 
 Write a cli script that prints random samples from a dataset. Needs to handle cases where strings and list types are extremely long by truncating to a reasonable maximum number of items. Samples should be printed as json-like.
 
@@ -37,27 +37,28 @@ Inputs:
 - dataset
 
 # Initialize a repo
-python src/data_science_agent/initialize_repo.py --repo-path ~/test_repo
+python -m annotate_and_finetune.data_science_agent.initialize_repo --repo-path ~/test_repo
 
 # Generate a file in the repo containing 5 random records from the data
-python src/data_science_agent/get_data_sample.py --data-path dummy_data.jsonl --output-path ~/test_repo/sample_data.md
+python -m annotate_and_finetune.data_science_agent.get_data_sample --data-path dummy_data.jsonl --output-path ~/test_repo/sample_data.md --n-samples 3
 
 # Generate a file in the repo containing a data schema
-python src/data_science_agent/get_data_schema.py \
+python -m annotate_and_finetune.data_science_agent.get_data_schema \
     --data-sample-path ~/test_repo/sample_data.md \
     --output-path ~/test_repo/data_schema.md \
-    --model bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0
+    --model claude-3-5-sonnet-20241022
 
 # Commit all changes in the repo
-python src/data_science_agent/git_commit.py \
+python -m annotate_and_finetune.data_science_agent.git_commit \
     --repo-path ~/test_repo \
     --commit-message "Initial commit"
 
-# Generate a task
-python src/data_science_agent/get_eda_script_task.py \
-    --schema-path ~/test_repo/data_schema.md \
+# Run a task
+python -m annotate_and_finetune.data_science_agent.run_aider_task \
+    --repo-path ~/test_repo \
+    --data-path dummy_data.jsonl \
     --task "Generate univariate summary statistics for the dataset" \
-    --model bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0
+    --model claude-3-5-sonnet-20241022
 
 # Input
 - EDA task
