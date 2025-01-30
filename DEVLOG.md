@@ -1,6 +1,11 @@
 ## Script to initialize a git repo
 
-aider --model claude-3-5-sonnet-20241022 --read cli_script_template.py src/data_science_agent/initialize_repo.py
+aider --no-show-model-warnings --model claude-3-5-sonnet-20241022 src/annotate_and_finetune/data_science_agent/initialize_repo.py
+
+aider --no-show-model-warnings --model claude-3-5-sonnet-20241022 \
+    --read src/annotate_and_finetune/data_science_agent/cli_script_template.py \
+    --read src/annotate_and_finetune/data_science_agent/data_io_template.py \
+    src/annotate_and_finetune/data_science_agent/initialize_repo.py
 
 Write a cli script that initializes an empty git repo. If `output_dir` exists, it should be emptied. If not, create it. Then, initialize an empty git repo.
 
