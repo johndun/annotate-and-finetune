@@ -24,6 +24,9 @@ def initialize_repo(
     # Create fresh directory
     output_path.mkdir(parents=True)
     
+    # Create logs subdirectory
+    (output_path / "logs").mkdir()
+    
     # Initialize git repository
     git.Repo.init(output_path)
     
