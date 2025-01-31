@@ -9,13 +9,15 @@ from llmpipe import Input, Output
 from llmpipe.prompt_module2 import PromptModule2
 
 from annotate_and_finetune.data_science_agent.collect_files import collect_files
+from annotate_and_finetune.data_science_agent.generate_eda_script import generate_eda_script
 
 
-def generate_followups(
+def generate_followup(
     repo_path: Annotated[str, Option(help="Working directory")],
-    output_path: Annotated[str, Option(help="Path to save the outputs")] = None,
+    data_path: Annotated[str, Option(help="Dataset path")],
     model: Annotated[str, Option(help="A LiteLLM model identifier")] = "claude-3-5-sonnet-20241022-v2",
-    verbose: Annotated[bool, Option(help="Stream output to stdout")] = False
+    verbose: Annotated[bool, Option(help="Stream output to stdout")] = False,
+    max_revisions: Annotated[int, Option(help="Maximum number of revisions")] = 0,
 ):
     """Draft followups using EDA results."""
     # Read the schema
@@ -33,36 +35,40 @@ def generate_followups(
     eda_results = "\n\n".join(txt)
 
     module = PromptModule2(
-        task="Propose up to 3 follow up exploratory data analyses based on current results. Limit analyses to those that can be conducted with a single script using pandas, scipy, nltk, and numpy. Only text-based summaries for now (so no graphs).",
+        task="Propose a follow up exploratory data analysis based on current results. Follow up analyses should be simple enough that they can be implemented in a single, manageable script. Only base python3.10 packages, along with pandas, scipy, nltk, and numpy may be used. Only text-based summaries for now (so no graphs).",
         inputs=[
             Input("data_samples", "A small set of examples from a dataset"),
-            Output("data_schema", "The data schema as a markdown table"),
+            Input("data_schema", "The data schema as a markdown table"),
             Input("eda_results", "Current data analysis results"),
         ],
         outputs=[
             Output("thinking", "Begin by thinking step by step"),
-            Output("followups", "One or more follow up exploratory data analysis tasks")
+            Output("followup_task", "A follow up exploratory data analysis task")
         ],
         model=model,
         verbose=verbose
     )
     if verbose:
         print(module.prompt)
+        print(data_schema)
+        print(data_samples)
+        print(eda_results)
     response = module(
         data_samples=data_samples,
         data_schema=data_schema,
         eda_results=eda_results
     )
-
-    # Save if output path provided
-    if output_path:
-        with open(output_path, "w") as f:
-            f.write(response["followups"])
-        print(f"\nSaved to {output_path}")
-    else:
-        print(response["followups"])
+    followup_task = response["followup_task"]
+    generate_eda_script(
+        task=followup_task,
+        data_path=data_path,
+        repo_path=repo_path,
+        model=model,
+        verbose=verbose,
+        max_revisions=2
+    )
 
 if __name__ == "__main__":
     app = typer.Typer(add_completion=False, pretty_exceptions_show_locals=False)
-    app.command()(generate_followups)
+    app.command()(generate_followup)
     app()

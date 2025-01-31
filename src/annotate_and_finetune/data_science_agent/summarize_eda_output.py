@@ -10,20 +10,24 @@ from llmpipe.prompt_module2 import PromptModule2
 
 
 def summarize_eda_output(
-    input_path: Annotated[str, Option(help="Path to eda output")],
-    output_path: Annotated[str, Option(help="Path to save the schema")] = None,
+    repo_path: Annotated[str, Option(help="Working directory")],
+    script_name: Annotated[str, Option(help="Script name")] = None,
     model: Annotated[str, Option(help="A LiteLLM model identifier")] = "claude-3-5-sonnet-20241022-v2",
     verbose: Annotated[bool, Option(help="Stream output to stdout")] = False
 ):
     """Draft document text using EDA results."""
     # Read the data
-    with open(input_path, "r") as f:
+    with open(f"{repo_path}/logs/{script_name}.log", "r") as f:
         eda_results = f.read()
+    with open(f"{repo_path}/data_schema.md", "r") as f:
+        data_schema = f.read()
 
     module = PromptModule2(
         task="Summarize outputs of an exploratory data analysis script. Use markdown headers for organization. Incorporate all of the relevant information from the EDA results. Focus on coverage. Content will be revised and consolidated into a final document. Include markdown tables where appropriate. Include methodology and explainers for any statistical techniques used. Include a section on insights and takeaways.",
         inputs=[
-            Input("eda_results", "Exploratory data analysis results"),
+            Input("data_schema", "The data schema"),
+            Input("eda_results", "Exploratory data analysis results")
+
         ],
         outputs=[
             Output("thinking", "Begin by thinking step by step"),
@@ -34,15 +38,12 @@ def summarize_eda_output(
     )
     if verbose:
         print(module.prompt)
-    response = module(eda_results=eda_results)
+    response = module(data_schema=data_schema, eda_results=eda_results)
 
-    # Save if output path provided
-    if output_path:
-        with open(output_path, "w") as f:
-            f.write(response["document"])
-        print(f"\nSaved to {output_path}")
-    else:
-        print(response["document"])
+    output_path = f"{repo_path}/notes/{script_name}.md"
+    with open(output_path, "w") as f:
+        f.write(response["document"])
+    print(f"\nSaved to {output_path}")
 
 
 if __name__ == "__main__":

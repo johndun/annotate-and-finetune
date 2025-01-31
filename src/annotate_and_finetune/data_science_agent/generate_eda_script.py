@@ -49,7 +49,7 @@ def run_aider(
 
 
 AIDER_MESSAGE_TEMPLATE = """\
-Write an exploratory data analysis (EDA) python script to complete a task. EDA scripts should only print outputs (to be used to inform future analyses and/or write research summary documents). Printed outputs should be clearly labeled. Output should include the task. Script should input a single dataset (schema defined below, no default). Script may have additional command line arguments, but these should all have defaults. Limit analyses to those that can be conducted with pandas, scipy, nltk, and numpy.
+Write an exploratory data analysis (EDA) python script to complete a task. EDA scripts should only print outputs (to be used to inform future analyses and/or write research summary documents). Printed outputs should be clearly labeled. Script should input a single dataset (schema defined below, no default). Script may have additional command line arguments, but these should all have defaults. Only base python3.10 packages, along with pandas, scipy, nltk, and numpy may be used.
 
 <task>
 {task}
@@ -70,11 +70,11 @@ data_samples:
 
 def generate_eda_script(
     task: Annotated[str, Option(help="Task")],
-    script_name: Annotated[str, Option(help="Script name")],
-    data_path: Annotated[str, Option(help="Dataset path")],
     repo_path: Annotated[str, Option(help="Working directory")],
-    max_revisions: Annotated[int, Option(help="Maximum number of revisions")] = 0,
-    model: Annotated[str, Option(help="A LiteLLM model identifier")] = "claude-3-5-sonnet-20241022-v2"
+    data_path: Annotated[str, Option(help="Dataset path")],
+    model: Annotated[str, Option(help="A LiteLLM model identifier")] = "claude-3-5-sonnet-20241022-v2",
+    verbose: Annotated[bool, Option(help="Stream output to stdout")] = False,
+    max_revisions: Annotated[int, Option(help="Maximum number of revisions")] = 0
 ):
     """Generate detailed requirements for a data science EDA task using an LLM."""
     # Read the schema
@@ -85,6 +85,17 @@ def generate_eda_script(
     with open(f"{repo_path}/sample_data.md", "r") as f:
         data_samples = f.read()
 
+    # Generate a script name
+    script_name_module = PromptModule2(
+        task="Given a data science task, generate a python script name (with .py extension).",
+        inputs=[Input("task", "A data science task")],
+        outputs=[Output("script_name", "Python script name")],
+        model=model,
+        verbose=verbose
+    )
+    script_name = script_name_module(task=task)["script_name"]
+
+    # Write the script
     message = AIDER_MESSAGE_TEMPLATE.format(
         task=task,
         data_path=data_path,
@@ -92,6 +103,8 @@ def generate_eda_script(
         script_name=script_name,
         data_samples=data_samples
     )
+    if verbose:
+        print(message)
     message_file = f"{repo_path}/prompt.txt"
     with open(message_file, "w") as f:
         f.write(message)
@@ -101,9 +114,12 @@ def generate_eda_script(
         model=model,
         script_path=script_name
     )
+
     # Run the script and write the output to a log file
     log_path = "logs/" + script_name[:-3] + ".log"
     run_command(f"python {script_name} --data-path {data_path} > {log_path} 2>&1", repo_path)
+
+    # Debug and revise
     last_git_hash = git.Repo(repo_path).head.commit.hexsha
     n_tries = 0
     bugfree = False
@@ -114,15 +130,17 @@ def generate_eda_script(
         if new_git_hash == last_git_hash:
             bugfree = True
         else:
-            run_command(f"python {script_name} --data-path {data_path} > {log_path} 2>&1", repo_path)
+            with open(f"{repo_path}/{log_path}", "w") as f:
+                f.write(f"{task}\n\n")
+            run_command(f"python {script_name} --data-path {data_path} >> {log_path} 2>&1", repo_path)
             last_git_hash = new_git_hash
             n_tries += 1
-    notes_path = "notes/" + script_name[:-3] + ".md"
+
     summarize_eda_output(
-        input_path=f"{repo_path}/{log_path}",
-        output_path=f"{repo_path}/{notes_path}",
+        repo_path=repo_path,
+        script_name=script_name[:-3],
         model=model,
-        verbose=True
+        verbose=verbose
     )
 
 
